@@ -1,0 +1,82 @@
+﻿@using Forum.Business
+@{
+
+}
+@model Tuple<Forum.Models.User, Forum.Models.Post>
+@{
+	ViewData["Title"] = "Index";
+	var user = Model.Item1;
+	var post = Model.Item2;
+}
+
+@{
+	<div class="row">
+		<div class="col s12">
+			<div class="container">
+				@if (Model == null)
+				{
+					<h1>Not Found</h1>
+				}
+				else if (post.Status != Status.Published)
+				{
+					<h1>This post is hidden.</h1>
+				}
+				else
+				{
+					<div class="card teal darken-4 white-text">
+						<div class="card-action center-align">
+							<span class="card-title">@post.Title</span><br />
+							<span class="card-title">By @post.User.Username</span>
+						</div>
+						<div class="card-action">
+							<p>
+								@post.Content
+							</p>
+						</div>
+						<div class="card-action">
+							@if (user != null)
+							{
+								@using (Html.BeginForm("Comment", "Post", null, FormMethod.Post, true, null))
+								{
+									<div class="input-field">
+										<input type="hidden" name="postId" value="@post.Id.ToString()" />
+										<input placeholder="Write a comment..." id="comment" name="comment" type="text" class="validate white-text" required="required" data-length="200">
+										<label for="comment" class="white-text">@user.Username</label>
+										<span class="helper-text" data-error="Invalid comment!" data-success=""></span>
+										<input type="submit" class="right btn" value="Post" />
+									</div>
+									Html.EndForm();
+								}
+							}
+							else
+							{
+								<div class="center-align">
+									<p>You must be logged in to comment this post.</p>
+								</div>
+							}
+						</div>
+						<div class="card-action">
+							@if (post.Comments == null || post.Comments.Count == 0)
+							{
+								<span>Comments:</span>
+								<div class="center-align">
+									<p>There are no comments.</p>
+								</div>
+							}
+							else
+							{
+								<span>Comments (@post.Comments.Count):</span>
+								foreach (var comment in post.Comments)
+								{
+									<div class="card-panel black-text">
+										<strong style="font-weight: bold;">@comment.User.Username says:</strong> @comment.Content
+									</div>
+								}
+							}
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+}

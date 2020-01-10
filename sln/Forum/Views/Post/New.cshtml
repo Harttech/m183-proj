@@ -1,0 +1,35 @@
+﻿@{
+	ViewData["Title"] = "New";
+}
+
+<div class="row">
+	<div class="col s12" style="display: flex; flex-wrap: wrap; min-height: 100vh;">
+		<div class="container" style="margin-top: 5%;">
+			<div class="card darken-4 teal white-text">
+				@using (Html.BeginForm("New", "Post", FormMethod.Post))
+				{
+					<div class="card-action" style="border-bottom: 1px solid #a0a0a0; border-bottom: 1px solid rgba(160,160,160,0.2)">
+						<h4 class="card-title" style="font-weight: bold">
+							New Post
+						</h4>
+					</div>
+					<div class="card-content">
+						<div class="input-field">
+							<input type="text" id="title" name="Title" placeholder="Enter a title here..." class="validate white-text" required="required" />
+							<span class="helper-text" data-error="Please enter a title." data-success=""></span>
+						</div>
+						<div class="input-field">
+							<textarea id="content" name="Content" placeholder="Enter the content here..." class="materialize-textarea validate white-text" required="required" style="height: 200px" data-length="200"></textarea>
+							<span class="helper-text" data-error="Please enter a text." data-success=""></span>
+						</div>
+					</div>
+					<div class="card-action">
+						<input type="submit" class="btn yellow-text darken-4" value="Create" />
+					</div>
+					Html.EndForm();
+				}
+			</div>
+		</div>
+	</div>
+</div>
+

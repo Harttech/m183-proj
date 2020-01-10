@@ -1,0 +1,112 @@
+﻿@using Forum.Business.Helpers
+
+@{
+	ViewData["Title"] = "Register";
+}
+
+<div class="row">
+	<div class="col s12 m3">
+
+	</div>
+	<div class="col s12 m3">
+		<div class="card darken-4 teal">
+			@using (Html.BeginForm("Index", "Register", null, FormMethod.Post, true, null))
+			{
+				<div class="card-action">
+					<span class="card-title white-text">
+						Register
+					</span>
+				</div>
+				<div class="card-content">
+					<div class="input-field">
+						<input placeholder="Enter your username..." id="username" name="username" type="text" class="validate white-text" required="required">
+						<label for="username">Username</label>
+						<span class="helper-text" data-error="Please enter a username!" data-success=""></span>
+					</div>
+					<div class="input-field">
+						<input placeholder="Enter your email address..." id="email" name="email" type="email" class="validate white-text" required="required" pattern="@Patterns.EmailPattern">
+						<label for="email">E-Mail Address</label>
+						<span class="helper-text" data-error="Please enter a valid email address" data-success=""></span>
+					</div>
+					<div class="input-field">
+						<input placeholder="Enter your phone number..." id="phone" name="phone" type="tel" class="validate white-text" required="required" pattern="@Patterns.PhonePattern">
+						<label for="phone">Phone Number</label>
+						<span class="helper-text" data-error="Please enter a valid phone number!" data-success=""></span>
+					</div>
+					<div class="input-field">
+						<input placeholder="Enter your password..." id="password" name="password" type="password" class="validate white-text" required="required" pattern="@Patterns.PassPattern">
+						<label for="password">Password</label>
+						<span class="helper-text" data-error="Please enter a valid password!" data-success=""></span>
+					</div>
+					<div class="input-field">
+						<input placeholder="Reenter your password..." id="password2" name="password2" type="password" class="validate white-text" required="required" pattern="@Patterns.PassPattern">
+						<label for="password2">Reenter Password</label>
+						<span class="helper-text" data-error="Please reenter a valid password!" data-success=""></span>
+					</div>
+				</div>
+				<div class="card-action">
+					<input type="submit" class="btn btn-flat text-darken-3 yellow-text" value="Register" />
+					<span class="white-text">Already have an account? @Html.ActionLink("Login here!", "Index", "Login")</span>
+				</div>
+				Html.EndForm();
+			}
+		</div>
+	</div>
+	<div class="col s12 m3">
+		<div class="card darken-4 teal">
+			<div class="card-action">
+				<span class="card-title white-text">
+					Info
+				</span>
+			</div>
+			<div class="card-content">
+				<div class="card-panel">
+					<h6>Phone numbers</h6>
+					<hr style="border: 1px solid transparent;" />
+					<p>
+						Phone numbers have to start with an international code for the country the number is registered in.<br />
+						Example: +41 12 345 67 89<br />
+						Example: 0041 12 345 67 89
+					</p>
+				</div>
+				<div class="card-panel">
+					<h6>Email address</h6>
+					<hr style="border: 1px solid transparent;" />
+					<p>
+						The email address must be in a valid format.
+						Example: Name@@Domain.tld
+					</p>
+				</div>
+				<div class="card-panel">
+					<h6>Password</h6>
+					<hr style="border: 1px solid transparent;" />
+					<p>
+						The password must include:
+						<ul>
+							<li>8 - 12 characters</li>
+							<li>At least 1 uppercase letter</li>
+							<li>At least 1 lowercase letter</li>
+							<li>At least 1 special character</li>
+						</ul>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col s12 m3">
+
+	</div>
+	@{
+		var passwordError = ViewData["PasswordEqual"]?.Equals(true) == true;
+		if (passwordError)
+		{
+
+		}
+
+		var userExist = ViewData["UserExist"]?.Equals(true) == true;
+		if (userExist)
+		{
+
+		}
+	}
+</div>

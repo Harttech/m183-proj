@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,6 +13,10 @@ namespace Forum
 		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
+			using (var client = new DataBase())
+			{
+				client.Database.Migrate();
+			}
 		}
 
 		public IConfiguration Configuration { get; }
@@ -23,11 +25,20 @@ namespace Forum
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllersWithViews();
+			services.AddEntityFrameworkSqlite().AddDbContext<DataBase>();
+			services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(10);
+				options.Cookie.Name = "MeIsCookieButPlsDontEat";
+				options.Cookie.HttpOnly = true;
+				options.Cookie.IsEssential = true;
+			});
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
+			app.UseSession();
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();

@@ -1,0 +1,48 @@
+﻿@{
+	var loggedIn = ViewData["UserLoggedIn"]?.Equals(true) == true;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Forum - @ViewData["Title"]</title>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="~/css/site.css" />
+	<link type="text/css" rel="stylesheet" href="~/lib/materialize/css/materialize.min.css" media="screen,projection" />
+</head>
+<body>
+	<nav>
+		<div class="nav-wrapper" style="padding-left: 10px; padding-right: 10px;">
+			@Html.ActionLink("Home", "Index", "Home", null, new { @class = "brand-logo left" })
+			<div class="col s12">
+				<ul class="right">
+					@if (loggedIn)
+					{
+						<li>@Html.ActionLink("New post", "New", "Post")</li>
+					}
+					<li>@Html.ActionLink("Delete entries", "Index", "Home", new {delete = true})</li>
+					<li>@Html.ActionLink("Create default entries", "CreateDefault", "Home")</li>
+					<li>@Html.ActionLink("Api Documentation", "Index", "ApiHelp")</li>
+					@if (!loggedIn)
+					{
+						<li>@Html.ActionLink("Register", "Index", "Register")</li>
+					}
+					<li>
+						@if (loggedIn)
+						{
+							@Html.ActionLink("Logout", "Logout", "Home")
+						}
+						else
+						{
+							@Html.ActionLink("Login", "Index", "Login")
+						}
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	@RenderBody()
+	<script type="text/javascript" src="~/lib/materialize/js/materialize.min.js"></script>
+</body>
+</html>
