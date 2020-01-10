@@ -1,5 +1,4 @@
-﻿@using Forum.Business.Helpers
-@model List<Forum.Models.Post>
+﻿@model List<Forum.Models.Post>
 @{
     ViewData["Title"] = "Home";
 }
@@ -14,21 +13,9 @@
 					<div class="container">
 						<a href="@Url.Action("Read", "Post", new {id = post.Id.ToString()})">
 							<div class="card hoverable darken-4 teal white-text" style="cursor: pointer">
-								<div class="card-action" style="border-bottom: 1px solid #a0a0a0; border-bottom: 1px solid rgba(160, 160, 160, 0.2)">
+								<div class="card-action">
 									<h4 class="card-title" style="font-weight: bold;">@post.Title</h4>
 									<p class="blue-grey-text">By @post.User.Username</p>
-								</div>
-								<div class="card-content">
-									@if (post.Content.Length > 100)
-									{
-										@(Html.Raw(Patterns.ReturnsToHtml(post.Content.Substring(0, 100) + "...")))
-									}
-									else
-									{
-										@post.Content
-									}
-								</div>
-								<div class="card-action">
 									<p class="blue-grey-text">Created on: @post.CreatedOn.ToString("g") UTC</p>
 								</div>
 							</div>

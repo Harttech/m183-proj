@@ -136,7 +136,7 @@ namespace Forum.Controllers
 				return Auth("DEBUG");
 			}
 
-			return Index();
+			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
