@@ -2,7 +2,7 @@
 {
 	public static class CryptoHelper
 	{
-		private const int Cost = 15;
+		private const int Cost = 13;
 
 		public static string GenerateRandomSalt()
 		{
@@ -24,6 +24,24 @@
 		public static bool VerifyHash(string plain, string hash)
 		{
 			return BCrypt.Net.BCrypt.Verify(plain, hash);
+		}
+
+		public static string ExtractSalt(string hash)
+		{
+			var index = 0;
+			for (int i = 0; i < 3; i++)
+			{
+				index = hash.IndexOf('$', index) + 1;
+			}
+
+			if (index == -1)
+				return null;
+
+			var length = index + 22;
+			if (hash.Length < length)
+				return null;
+
+			return hash.Substring(0, length);
 		}
 	}
 }

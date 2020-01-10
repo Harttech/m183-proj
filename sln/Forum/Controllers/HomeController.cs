@@ -44,7 +44,7 @@ namespace Forum.Controllers
 		{
 			var db = DataBase.Instance;
 			if (db.Users.Any())
-				return View("Index");
+				return RedirectToAction("Index");
 			return View();
 		}
 
@@ -92,11 +92,123 @@ namespace Forum.Controllers
 				db.Users.Add(admin);
 				db.Users.Add(mod);
 				db.Users.Add(member);
+
+				var adminPost = new Post
+				{
+					Title = "Admin credentials",
+					Content = "User: Admin\r\nPass: TestPass1!",
+					User = admin,
+					UserId = admin.Id,
+					Status = Status.Published
+				};
+
+				var userPost1 = new Post
+				{
+					Title = "User credentials",
+					Content = "User: Member\r\nPass: TestPass1!",
+					User = member,
+					UserId = member.Id,
+					Status = Status.Published
+				};
+
+				var userPost2 = new Post
+				{
+					Title = "User post deleted",
+					Content = "This post was deleted by a user and is only visible for the administrator. They can restore it or delete it permanently.",
+					User = member,
+					UserId = member.Id,
+					Status = Status.Deleted
+				};
+
+				var userPost3 = new Post
+				{
+					Title = "User post hidden",
+					Content = "This post was created by a user. But it has to be published by an admin. Until then it will be hidden and only viewable to admins and the creator.",
+					User = member,
+					UserId = member.Id,
+					Status = Status.Hidden
+				};
+
+				db.Posts.Add(adminPost);
+				db.Posts.Add(userPost1);
+				db.Posts.Add(userPost2);
+				db.Posts.Add(userPost3);
+
+				var userComment = new Comment
+				{
+					Content = "You DO know this post is public, right?",
+					User = member,
+					UserId = member.Id,
+					Post = adminPost,
+					PostId = adminPost.Id
+				};
+
+				var adminComment = new Comment
+				{
+					Content = "Oh crap.",
+					User = admin,
+					UserId = admin.Id,
+					Post = adminPost,
+					PostId = adminPost.Id
+				};
+
+				var adminComment2 = new Comment
+				{
+					Content = "Same counts for you too. Hide your post, idiot.",
+					User = admin,
+					UserId = admin.Id,
+					Post = userPost1,
+					PostId = userPost1.Id
+				};
+
+				var userComment2 = new Comment
+				{
+					Content = "Actually this is intentionally. Btw, did you know you can use \"DEBUG\" as auth code to login faster?",
+					User = member,
+					UserId = member.Id,
+					Post = userPost1,
+					PostId = userPost1.Id
+				};
+
+				var adminComment3 = new Comment
+				{
+					Content = "Yes...I am the admin. Of course I know.",
+					User = admin,
+					UserId = admin.Id,
+					Post = userPost1,
+					PostId = userPost1.Id
+				};
+
+				var userComment3 = new Comment
+				{
+					Content = "Oh, right.",
+					User = member,
+					UserId = member.Id,
+					Post = userPost1,
+					PostId = userPost1.Id
+				};
+
+				var modComment = new Comment
+				{
+					Content = "I should rather work on more important systems than writing these comments.",
+					User = mod,
+					UserId = mod.Id,
+					Post = userPost1,
+					PostId = userPost1.Id
+				};
+
+				db.Comments.Add(userComment);
+				db.Comments.Add(adminComment);
+				db.Comments.Add(adminComment2);
+				db.Comments.Add(userComment2);
+				db.Comments.Add(adminComment3);
+				db.Comments.Add(userComment3);
+				db.Comments.Add(modComment);
+
 				db.SaveChanges();
-				return View("Index");
 			}
 
-			return View();
+			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
@@ -107,7 +219,7 @@ namespace Forum.Controllers
 				HttpContext.Session.Clear();
 			}
 
-			return RedirectToAction("Index");
+			return RedirectToAction("Index", "Login");
 		}
 
 		private User GetLoggedInUser()

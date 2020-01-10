@@ -21,11 +21,12 @@
 							<div class="card-action" style="border-bottom: 1px solid #a0a0a0; border-bottom: 1px solid rgba(160, 160, 160, 0.2)">
 								<h4 class="card-title" style="font-weight: bold;">@post.Title</h4>
 								<p class="blue-grey-text">By: @post.User.Username</p>
+								<p class="blue-grey-text">Status: @post.Status</p>
 							</div>
 							<div class="card-content">
 								@if (post.Content.Length > 100)
 								{
-									@(post.Content.Take(100) + "...")
+									@(post.Content.Substring(0, 100) + "...")
 								}
 								else
 								{
@@ -42,7 +43,11 @@
 								{
 									@Html.ActionLink("Hide", "Hide", "Post", new { id = post.Id.ToString() }, new { @class = "btn" })
 								}
-								@Html.ActionLink("Delete", "Delete", "Post", new { id = post.Id.ToString() }, new { @class = "btn" })
+								@Html.ActionLink("Delete permanently", "Delete", "Post", new { id = post.Id.ToString() }, new { @class = "btn" })
+								@if (post.Status == Status.Deleted)
+								{
+									@Html.ActionLink("Restore", "Hide", "Post", new { id = post.Id.ToString() }, new { @class = "btn" })
+								}
 							</div>
 						</div>
 					</div>
@@ -78,7 +83,7 @@ else if (user.Role == Role.Member)
 							<div class="card-content">
 								@if (post.Content.Length > 100)
 								{
-									@(post.Content.Take(100) + "...")
+									@(post.Content.Substring(0, 100) + "...")
 								}
 								else
 								{

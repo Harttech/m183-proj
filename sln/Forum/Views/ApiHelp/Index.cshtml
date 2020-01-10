@@ -1,7 +1,100 @@
-﻿
+﻿@using Forum.Business.Helpers
+@model Forum.Models.User
 @{
-    ViewData["Title"] = "Index";
+	ViewData["Title"] = "API Documentation";
+	var token = Model?.GetCurrentApiToken();
 }
 
-<h1>Index</h1>
+@if (Model != null)
+{
+	<div class="row">
+		<div class="col s12">
+			<div class="container">
+				<div class="card teal darken-4 white-text">
+					<div class="card-action">
+						<div class="card-panel">
+							@{
+								@if (token.HasText())
+								{
+									<span class="black-text">Your API Key:</span> <span class="black-text" style="font-weight: bold;">@token</span>
+								}
+								else
+								{
+									<span class="black-text">You have no valid API Key</span> @Html.ActionLink("Generate Token", "GetApiKey", "ApiHelp", null, new { @class = "btn" })
+								}
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
 
+<div class="row">
+	<div class="col s12">
+		<div class="container">
+			<div class="card teal darken-4 white-text">
+				<div class="card-action">
+					<span class="card-title">Click on a request to execute it (when logged in).</span>
+				</div>
+				<div class="card-action">
+					<a href="@Url.Action("Posts", "Api")" style="text-transform:none;" target="_blank">
+						<div class="card hoverable black-text" style="cursor: pointer;">
+							<div class="card-content">
+								<span class="card-title">Posts</span>
+								<p>Returns a collection of all published posts in the JSON format. This request does not require an API key.</p>
+								<span class="grey-text darken-2">@Url.Action("Posts", "Api", null, Url.ActionContext.HttpContext.Request.Scheme)</span>
+							</div>
+						</div>
+					</a>
+					<a href="@Url.Action("Post", "Api", new { apikey = token, postid = "PostIdHere" })" style="text-transform:none;" target="_blank">
+						<div class="card hoverable black-text" style="cursor: pointer;">
+							<div class="card-content">
+								<span class="card-title">Post</span>
+								<p>Returns the specified post if the keyholder has the permission to.</p>
+								<span class="grey-text darken-2">@Url.Action("Posts", "Api", null, Url.ActionContext.HttpContext.Request.Scheme)?apiKey=@((token.HasText() ? token : "{YOUR KEY}"))&amp;postId={POST ID}</span>
+							</div>
+						</div>
+					</a>
+					<a href="@Url.Action("Comments", "Api", new { apikey = token, postid = "PostIdHere" })" style="text-transform:none;" target="_blank">
+						<div class="card hoverable black-text" style="cursor: pointer;">
+							<div class="card-content">
+								<span class="card-title">Comments</span>
+								<p>Returns the comments of a post if the keyholder has the permissions to.</p>
+								<span class="grey-text darken-2">@Url.Action("Comments", "Api", null, Url.ActionContext.HttpContext.Request.Scheme)?apiKey=@((token.HasText() ? token : "{YOUR KEY}"))&amp;postId={POST ID}</span>
+							</div>
+						</div>
+					</a>
+					<a href="@Url.Action("Users", "Api", token.HasText() ? new { apikey = token } : null)" style="text-transform:none;" target="_blank">
+						<div class="card hoverable black-text" style="cursor: pointer;">
+							<div class="card-content">
+								<span class="card-title">Users</span>
+								<p>Returns a list of user IDs.</p>
+								<span class="grey-text darken-2">@Url.Action("Users", "Api", null, Url.ActionContext.HttpContext.Request.Scheme)?apiKey=@((token.HasText() ? token : "{YOUR KEY}"))</span>
+							</div>
+						</div>
+					</a>
+					<a href="@Url.Action("GetUser", "Api", new { apikey = token, userId = Model?.Id.ToString() ?? "UserIdHere" })" style="text-transform:none;" target="_blank">
+						<div class="card hoverable black-text" style="cursor: pointer;">
+							<div class="card-content">
+								<span class="card-title">Get User</span>
+								<p>Returns the user, if the keyholder has the permission to.</p>
+								<span class="grey-text darken-2">@Url.Action("GetUser", "Api", null, Url.ActionContext.HttpContext.Request.Scheme)?apiKey=@((token.HasText() ? token : "{YOUR KEY}"))&amp;userId=@(Model != null ? Model.Id.ToString() : "{USER ID}")</span>
+							</div>
+						</div>
+					</a>
+					<a href="@Url.Action("MyUser", "Api", token.HasText() ? new { apikey = token } : null)" style="text-transform:none;" target="_blank">
+						<div class="card hoverable black-text" style="cursor: pointer;">
+							<div class="card-content">
+								<span class="card-title">My User</span>
+								<p>Returns the user of the keyholder in the JSON format.</p>
+								<span class="grey-text darken-2">@Url.Action("MyUser", "Api", null, Url.ActionContext.HttpContext.Request.Scheme)?apiKey=@((token.HasText() ? token : "{YOUR KEY}"))</span>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

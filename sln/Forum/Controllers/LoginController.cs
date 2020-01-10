@@ -110,6 +110,36 @@ namespace Forum.Controllers
 		}
 
 		[HttpGet]
+		public IActionResult Quick(string id)
+		{
+			User user = null;
+			switch (id.ToLowerInvariant())
+			{
+				case "admin":
+					user = _db.Users.FirstOrDefault(x => x.Username.Equals("Admin"));
+					break;
+					
+				case "moderator":
+					user = _db.Users.FirstOrDefault(x => x.Username.Equals("Moderator"));
+					break;
+
+				default:
+					user = _db.Users.FirstOrDefault(x => x.Username.Equals("Member"));
+					break;
+			}
+
+			if (user != null)
+			{
+				_loggedInUser = user;
+				HttpContext.Session.SetString("LoggedInUser", user.Id.ToString());
+				HttpContext.Session.CommitAsync();
+				return Auth("DEBUG");
+			}
+
+			return Index();
+		}
+
+		[HttpGet]
 		public async Task<IActionResult> Auth()
 		{
 			if (!HttpContext.Session.IsAvailable)

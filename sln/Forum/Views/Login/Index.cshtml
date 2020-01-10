@@ -31,6 +31,14 @@
 					<input type="submit" class="btn btn-flat text-darken-3 yellow-text" value="Login" />
 					<span class="white-text">Don't have an account? @Html.ActionLink("Register here!", "Index", "Register")</span>
 				</div>
+				<div class="card-action">
+					<span class="card-title white-text">
+						Quick Logins
+					</span>
+					@Html.ActionLink("Member", "Quick", "Login", new { id = "Member" }, new { @class = "btn" })
+					@Html.ActionLink("Moderator", "Quick", "Login", new { id = "Moderator" }, new { @class = "btn" })
+					@Html.ActionLink("Administrator", "Quick", "Login", new { id = "Admin" }, new { @class = "btn" })
+				</div>
 				Html.EndForm();
 			}
 		</div>

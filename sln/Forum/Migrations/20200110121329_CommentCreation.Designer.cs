@@ -3,14 +3,16 @@ using System;
 using Forum;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Forum.Migrations
 {
     [DbContext(typeof(DataBase))]
-    partial class DataBaseModelSnapshot : ModelSnapshot
+    [Migration("20200110121329_CommentCreation")]
+    partial class CommentCreation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,9 +84,6 @@ namespace Forum.Migrations
 
                     b.Property<DateTime>("ExpiryUtc")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("TokenKind")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("TokenString")
                         .IsRequired()

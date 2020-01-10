@@ -1,4 +1,5 @@
-﻿@model List<Forum.Models.Post>
+﻿@using Forum.Business.Helpers
+@model List<Forum.Models.Post>
 @{
     ViewData["Title"] = "Home";
 }
@@ -20,7 +21,7 @@
 								<div class="card-content">
 									@if (post.Content.Length > 100)
 									{
-										@(post.Content.Take(100) + "...")
+										@(Html.Raw(Patterns.ReturnsToHtml(post.Content.Substring(0, 100) + "...")))
 									}
 									else
 									{
@@ -28,7 +29,7 @@
 									}
 								</div>
 								<div class="card-action">
-									<p class="blue-grey-text">Created on: @post.CreatedOn.ToString("f") UTC</p>
+									<p class="blue-grey-text">Created on: @post.CreatedOn.ToString("g") UTC</p>
 								</div>
 							</div>
 						</a>

@@ -46,10 +46,14 @@ namespace Forum.Controllers
 					var post = _db.Posts.FirstOrDefault(x => x.Id.Equals(guid));
 					if (post != null)
 					{
-						if (post.UserId.Equals(loggedInUser.Id) || loggedInUser.Role == Role.Administrator)
+						if (loggedInUser.Role == Role.Administrator)
 						{
 							_db.Posts.Remove(post);
-							_db.SaveChanges();
+						}
+						else if (post.UserId.Equals(loggedInUser.Id))
+						{
+							post.Status = Status.Deleted;
+							_db.Posts.Update(post).State = EntityState.Modified;
 						}
 					}
 				}
