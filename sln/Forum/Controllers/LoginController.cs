@@ -57,6 +57,17 @@ namespace Forum.Controllers
 			var loggedInUser = GetLoggedInUser();
 			if (loggedInUser != null)
 			{
+				if (loggedInUser.AccessBlocked)
+				{
+					if (DateTime.UtcNow < loggedInUser.AccessBlockedUntilUtc)
+						return View("Blocked", loggedInUser.AccessBlockedUntilUtc.Value);
+
+					loggedInUser.AccessBlocked = false;
+					loggedInUser.AccessBlockedUntilUtc = null;
+					_db.Users.Update(loggedInUser).State = EntityState.Modified;
+					_db.SaveChanges();
+				}
+
 				var authenticated = IsAuthenticated();
 				if (authenticated)
 					return RedirectToAction("Index", "Home");
@@ -84,9 +95,37 @@ namespace Forum.Controllers
 				if (user == null)
 					return View();
 
+				if (user.AccessBlocked)
+				{
+					if (DateTime.UtcNow < user.AccessBlockedUntilUtc)
+						return View("Blocked", user.AccessBlockedUntilUtc.Value);
+
+					user.AccessBlocked = false;
+					user.AccessBlockedUntilUtc = null;
+					_db.Users.Update(user).State = EntityState.Modified;
+					_db.SaveChanges();
+				}
+
 				var validPass = CryptoHelper.VerifyHash(password, user.Password);
 				if (!validPass)
+				{
+					var tries = HttpContext.Session.GetInt32("LoginFails") ?? 0;
+					tries++;
+					if (tries >= 3)
+					{
+						user.AccessBlocked = true;
+						user.AccessBlockedUntilUtc = DateTime.UtcNow.AddMinutes(5);
+						_db.Users.Update(user).State = EntityState.Modified;
+						_db.SaveChanges();
+						HttpContext.Session.SetInt32("LoginFails", 0);
+						HttpContext.Session.CommitAsync();
+						return View("Blocked", user.AccessBlockedUntilUtc.Value);
+					}
+
+					HttpContext.Session.SetInt32("LoginFails", tries);
+					HttpContext.Session.CommitAsync();
 					return View();
+				}
 
 				HttpContext.Session.SetString("LoggedInUser", user.Id.ToString());
 				HttpContext.Session.CommitAsync();
@@ -112,13 +151,13 @@ namespace Forum.Controllers
 		[HttpGet]
 		public IActionResult Quick(string id)
 		{
-			User user = null;
+			User user;
 			switch (id.ToLowerInvariant())
 			{
 				case "admin":
 					user = _db.Users.FirstOrDefault(x => x.Username.Equals("Admin"));
 					break;
-					
+
 				case "moderator":
 					user = _db.Users.FirstOrDefault(x => x.Username.Equals("Moderator"));
 					break;
@@ -149,6 +188,17 @@ namespace Forum.Controllers
 			var authenticated = IsAuthenticated();
 			if (loggedInUser == null)
 				return View("Index");
+
+			if (loggedInUser.AccessBlocked)
+			{
+				if (DateTime.UtcNow < loggedInUser.AccessBlockedUntilUtc)
+					return View("Blocked", loggedInUser.AccessBlockedUntilUtc.Value);
+
+				loggedInUser.AccessBlocked = false;
+				loggedInUser.AccessBlockedUntilUtc = null;
+				_db.Users.Update(loggedInUser).State = EntityState.Modified;
+				_db.SaveChanges();
+			}
 
 			if (authenticated)
 				return RedirectToAction("Index", "Dashboard");
@@ -181,6 +231,16 @@ namespace Forum.Controllers
 			if (loggedInUser == null)
 				return View("Index");
 
+			if (loggedInUser.AccessBlocked)
+			{
+				if (DateTime.UtcNow < loggedInUser.AccessBlockedUntilUtc)
+					return View("Blocked", loggedInUser.AccessBlockedUntilUtc.Value);
+
+				loggedInUser.AccessBlocked = false;
+				loggedInUser.AccessBlockedUntilUtc = null;
+				_db.Users.Update(loggedInUser).State = EntityState.Modified;
+				_db.SaveChanges();
+			}
 #if DEBUG
 			if (token.Equals("DEBUG"))
 			{
@@ -197,7 +257,23 @@ namespace Forum.Controllers
 			var smsToken = _db.Tokens.FirstOrDefault(x => x.TokenString.Equals(token) && x.UserId.Equals(loggedInUser.Id));
 
 			if (smsToken == null || smsToken.ExpiryUtc < DateTime.UtcNow)
-				return View("Index");
+			{
+				var tries = HttpContext.Session.GetInt32("LoginFails") ?? 0;
+				tries++;
+				if (tries >= 3)
+				{
+					loggedInUser.AccessBlocked = true;
+					loggedInUser.AccessBlockedUntilUtc = DateTime.UtcNow.AddMinutes(5);
+					_db.Users.Update(loggedInUser).State = EntityState.Modified;
+					_db.SaveChanges();
+					HttpContext.Session.SetInt32("LoginFails", 0);
+					HttpContext.Session.CommitAsync();
+					return View("Blocked", loggedInUser.AccessBlockedUntilUtc.Value);
+				}
+				HttpContext.Session.SetInt32("LoginFails", tries);
+				HttpContext.Session.CommitAsync();
+				return View("Auth");
+			}
 
 			_db.Tokens.Remove(smsToken);
 

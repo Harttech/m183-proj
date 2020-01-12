@@ -39,6 +39,12 @@ namespace Forum
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			app.UseSession();
+			app.Use(async (context, next) =>
+			{
+				context.Response.Headers.Add("X-Frame-Options", "DENY");
+				await next();
+			});
+
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
