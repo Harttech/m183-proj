@@ -30,8 +30,8 @@
 							<span class="card-title">By @post.User.Username</span>
 						</div>
 						<div class="card-action">
-							<p>
-								@Html.Raw(Patterns.ReturnsToHtml(post.Content))
+							<p style="white-space: pre-line;">
+								@post.Content
 							</p>
 						</div>
 						<div class="card-action">
