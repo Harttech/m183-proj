@@ -41,13 +41,10 @@
 								}
 								else
 								{
-									@Html.ActionLink("Hide", "Hide", "Post", new { id = post.Id.ToString() }, new { @class = "btn" })
+									var text = post.Status == Status.Deleted ? "Restore" : "Hide";
+									@Html.ActionLink(text, "Hide", "Post", new { id = post.Id.ToString() }, new { @class = "btn" })
 								}
 								@Html.ActionLink("Delete permanently", "Delete", "Post", new { id = post.Id.ToString() }, new { @class = "btn" })
-								@if (post.Status == Status.Deleted)
-								{
-									@Html.ActionLink("Restore", "Hide", "Post", new { id = post.Id.ToString() }, new { @class = "btn" })
-								}
 							</div>
 						</div>
 					</div>

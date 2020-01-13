@@ -19,6 +19,7 @@
 				<ul class="right">
 					@if (loggedIn)
 					{
+						<li>@Html.ActionLink("Dashboard", "Index", "Dashboard")</li>
 						<li>@Html.ActionLink("New post", "New", "Post")</li>
 					}
 					<li>@Html.ActionLink("Delete entries", "Index", "Home", new {delete = true})</li>

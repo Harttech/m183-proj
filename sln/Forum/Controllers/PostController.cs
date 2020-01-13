@@ -58,6 +58,7 @@ namespace Forum.Controllers
 					}
 				}
 			}
+			_db.SaveChanges();
 			return Index();
 		}
 
